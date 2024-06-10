@@ -4,7 +4,7 @@ import { FiGrid } from "react-icons/fi";
 
 const List = () => {
 	return (
-		<div className="List bg-accent-500 w-[20%] flex flex-col ">
+		<div className="List bg-accent-500 w-[20%] flex flex-col">
 			<div className="bg-accent-200 flex justify-between p-3 border-b border-black ">
 				<div className="flex">
 					<div className="px-2 py-1 text-gray-200 bg-white bg-opacity-10 rounded">
@@ -19,11 +19,11 @@ const List = () => {
 				</div>
 			</div>
 
-			<div className="text-gray-200 text-[12px] flex flex-col">
+			<div className="text-gray-200 text-[12px] flex flex-1 flex-col overflow-y-auto">
 				<h1 className="absolute px-4 border-b border-accent-200 bg-accent-500 w-[20%] text-gray-400 font-bold py-1 mb-2">
 					Today
 				</h1>
-				<div className="h-[850px] overflow-y-auto">
+				<div className="flex-1">
 					<div className="mx-4 mb-4">
 						<h1 className="text-gray-400 font-bold py-1 mb-2">
 							Yesterday
