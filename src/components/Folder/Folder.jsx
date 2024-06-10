@@ -1,6 +1,6 @@
 import { PiSidebar } from "react-icons/pi";
-import { CgProfile } from "react-icons/cg";
 import { IoFolderOutline } from "react-icons/io5";
+import { PiUserCircleFill } from "react-icons/pi";
 import { LuPlusCircle } from "react-icons/lu";
 
 const Folder = () => {
@@ -10,7 +10,7 @@ const Folder = () => {
 				<PiSidebar className="text-2xl m-1 text-accent-100 mx-2" />
 				<div className="flex justify-between items-center mt-3 px-2">
 					<div className="flex items-center py-1">
-						<CgProfile className="text-amber-400 inline-block text-[15px]" />
+						<PiUserCircleFill className="text-amber-400 inline-block text-[15px]" />
 						<p className="inline-block text-[13px] text-gray-200 ml-2">
 							Shared
 						</p>
