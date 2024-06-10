@@ -4,7 +4,7 @@ import { FiGrid } from "react-icons/fi";
 import axios from "axios";
 import { useState, useEffect } from "react";
 
-const List = () => {
+const List = ({ onUserClick }) => {
   const [data, setData] = useState([]);
   const [selectedItemId, setSelectedItemId] = useState(null);
 
@@ -18,6 +18,7 @@ const List = () => {
         const firstKey = Object.keys(response.data)[0];
         if (response.data[firstKey] && response.data[firstKey].length > 0) {
           setSelectedItemId(response.data[firstKey][0].id);
+		  onUserClick(response.data[firstKey][0].id);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -25,9 +26,10 @@ const List = () => {
     };
 
     fetchData();
-  }, []);
+  }, [onUserClick]);
 
   const handleItemClick = (id) => {
+	onUserClick(id);
     setSelectedItemId(id);
   };
 

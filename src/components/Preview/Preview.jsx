@@ -8,8 +8,40 @@ import { LuLink } from "react-icons/lu";
 import { IoLockClosedOutline } from "react-icons/io5";
 import { GoShare } from "react-icons/go";
 import { IoSearchOutline } from "react-icons/io5";
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
-const Preview = () => {
+const Preview = ({id}) => {
+	const [title, setTitle] = useState('');
+	const [updatedAt, setUpdatedAt] = useState('');
+	const [description, setDescription] = useState('');
+	useEffect(() => {
+		const fetchData = async () => {
+		  if (id !== -1) {
+			try {
+			  const url = `http://localhost:8080/item/${id}`;
+			  const response = await axios.get(url);
+			  const data = response.data;
+			  setTitle(data.title);
+			  setUpdatedAt(data.updatedAt);
+			  setDescription(data.description);
+			} catch (error) {
+			  console.error('Error fetching data:', error);
+			}
+		  }
+		};
+	
+		fetchData();
+	  }, [id]);
+
+	  const handleTitleChange = (e) => {
+		setTitle(e.target.value);
+	  };
+	
+	  const handleDescriptionChange = (e) => {
+		setDescription(e.target.value);
+	  };
+
 	return (
 		<div className="Preview bg-accent-700 flex flex-col flex-1 border-l border-black">
 			<div className="bg-accent-500 flex justify-between p-3 text-lg">
@@ -50,15 +82,19 @@ const Preview = () => {
 			</div>
 			<div className="flex flex-col flex-1 overflow-y-auto text-gray-200 text-[12px] px-4">
 				<p className="text-gray-400 text-center m-2">
-					June 10, 2024 at 1:23 PM
+					{updatedAt}
 				</p>
 				<input
 					type="text"
 					className="bg-transparent border-0 text-[20px] font-bold focus:outline-none focus:border-none w-full focus:caret-amber-400"
+					value={title}
+					onChange={handleTitleChange}
 				/>
 				<textarea
 					name="desc"
-					className="flex-1 bg-transparent border-0 text-[15px] focus:outline-none focus:border-none w-full focus:caret-amber-400 resize-none"
+					className="flex-1 bg-transparent border-0 focus:outline-none focus:border-none w-full focus:caret-amber-400 resize-none"
+					value={description}
+					onChange={handleDescriptionChange}
 				></textarea>
 			</div>
 		</div>
