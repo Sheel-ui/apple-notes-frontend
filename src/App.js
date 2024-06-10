@@ -12,7 +12,7 @@ function App() {
     setSelectedId(id);
   }, []);
 
-  const handleCreateItem = (createdItemId) => {
+  const handleCreateItem = () => {
     setNewCreated(!newCreated);
   };
 

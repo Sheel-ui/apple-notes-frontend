@@ -12,53 +12,93 @@ import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 const Preview = ({ id, onItemCreated }) => {
-    const [title, setTitle] = useState('');
-    const [updatedAt, setUpdatedAt] = useState('');
-    const [description, setDescription] = useState('');
+  const [previousId, setPreviousId] = useState(-1);
+  const [title, setTitle] = useState('');
+  const [updatedAt, setUpdatedAt] = useState('');
+  const [description, setDescription] = useState('');
+  const [hasChanged, setHasChanged] = useState(false);
 
-    const fetchData = useCallback(async (itemId) => {
-        if (itemId !== -1) {
-            try {
-                const url = `http://localhost:8080/item/${itemId}`;
-                const response = await axios.get(url);
-                const data = response.data;
-                setTitle(data.title);
-                setUpdatedAt(data.updatedAt);
-                setDescription(data.description);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        }
-    }, []);
+  const fetchData = useCallback(async (itemId) => {
+    if (itemId !== -1) {
+      try {
+        const url = `http://localhost:8080/item/${itemId}`;
+        const response = await axios.get(url);
+        const data = response.data;
+        setTitle(data.title);
+        setUpdatedAt(data.updatedAt);
+        setDescription(data.description);
+        setHasChanged(false); // Reset change flag
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+  }, []);
 
-    useEffect(() => {
-        fetchData(id);
-    }, [id, fetchData]);
-
-    const handleTitleChange = (e) => {
-        setTitle(e.target.value);
-    };
-
-    const handleDescriptionChange = (e) => {
-        setDescription(e.target.value);
-    };
-
-    const handleCreate = async () => {
+  useEffect(() => {
+    const savePreviousItem = async () => {
+      if (previousId !== -1 && hasChanged) {
         try {
-            const url = `http://localhost:8080/create`;
-            const requestData = {
-                title: "",
-                description: ""
-            };
-            const response = await axios.post(url, requestData);
-            const createdItemId = response.data.id; 
-
-            fetchData(createdItemId);
-			onItemCreated(createdItemId);
+          const url = `http://localhost:8080/item/${previousId}`;
+          const requestData = {
+            title: title,
+            description: description
+          };
+          await axios.put(url, requestData);
         } catch (error) {
-            console.error("Error creating item:", error);
+          console.error('Error saving data:', error);
         }
+      }
     };
+
+    if (previousId !== id) {
+      savePreviousItem().then(() => {
+        fetchData(id);
+        setPreviousId(id);
+      });
+    }
+  }, [id, previousId, fetchData, title, description, hasChanged]);
+
+  const handleTitleChange = (e) => {
+    setTitle(e.target.value);
+    setHasChanged(true);
+  };
+
+  const handleDescriptionChange = (e) => {
+    setDescription(e.target.value);
+    setHasChanged(true);
+  };
+
+  const handleCreate = async () => {
+    try {
+      if (previousId !== -1 && hasChanged) {
+        const url = `http://localhost:8080/item/${previousId}`;
+        const requestData = {
+          title: title,
+          description: description
+        };
+        await axios.put(url, requestData);
+      }
+
+      const url = `http://localhost:8080/create`;
+      const requestData = {
+        title: "",
+        description: ""
+      };
+      const response = await axios.post(url, requestData);
+      const createdItemId = response.data.id;
+      console.log(createdItemId);
+
+      // Fetch data using the newly created item ID
+      fetchData(createdItemId);
+      onItemCreated(createdItemId);
+      setPreviousId(createdItemId); // Update previousId to the newly created item ID
+      setHasChanged(false); // Reset change flag
+    } catch (error) {
+      console.error("Error creating item:", error);
+    }
+  };
+
+
 	return (
 		<div className="Preview bg-accent-700 flex flex-col flex-1 border-l border-black">
 			<div className="bg-accent-500 flex justify-between p-3 text-lg">
