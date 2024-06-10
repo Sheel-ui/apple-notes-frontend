@@ -10,7 +10,7 @@ const Folder = () => {
 				<PiSidebar className="text-2xl m-1 text-accent-100 mx-2" />
 				<div className="flex justify-between items-center mt-3 px-2">
 					<div className="flex items-center py-1">
-						<PiUserCircleFill className="text-amber-400 inline-block text-[15px]" />
+						<PiUserCircleFill className="text-amber-400 inline-block text-[16px]" />
 						<p className="inline-block text-[13px] text-gray-200 ml-2">
 							Shared
 						</p>
