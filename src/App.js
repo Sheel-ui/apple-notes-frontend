@@ -5,17 +5,22 @@ import Preview from './components/Preview/Preview';
 import { useState, useCallback } from "react";
 
 function App() {
+  const [selectedId, setSelectedId] = useState(-1);
+  const [newCreated, setNewCreated] = useState(false)
 
-  const [userId, setuserId] = useState(-1);
   const handleUserClick = useCallback((id) => {
-    setuserId(id);
+    setSelectedId(id);
   }, []);
+
+  const handleCreateItem = (createdItemId) => {
+    setNewCreated(!newCreated);
+  };
 
   return (
     <div className="App h-[100vh] flex">
-      <Folder></Folder>
-      <List onUserClick={handleUserClick}></List>
-      <Preview id={userId}></Preview>
+      <Folder />
+      <List onUserClick={handleUserClick} newCreated={newCreated} />
+      <Preview id={selectedId} onItemCreated={handleCreateItem} />
     </div>
   );
 }

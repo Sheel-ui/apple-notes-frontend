@@ -8,45 +8,63 @@ import { LuLink } from "react-icons/lu";
 import { IoLockClosedOutline } from "react-icons/io5";
 import { GoShare } from "react-icons/go";
 import { IoSearchOutline } from "react-icons/io5";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
-const Preview = ({id}) => {
-	const [title, setTitle] = useState('');
-	const [updatedAt, setUpdatedAt] = useState('');
-	const [description, setDescription] = useState('');
-	useEffect(() => {
-		const fetchData = async () => {
-		  if (id !== -1) {
-			try {
-			  const url = `http://localhost:8080/item/${id}`;
-			  const response = await axios.get(url);
-			  const data = response.data;
-			  setTitle(data.title);
-			  setUpdatedAt(data.updatedAt);
-			  setDescription(data.description);
-			} catch (error) {
-			  console.error('Error fetching data:', error);
-			}
-		  }
-		};
-	
-		fetchData();
-	  }, [id]);
+const Preview = ({ id, onItemCreated }) => {
+    const [title, setTitle] = useState('');
+    const [updatedAt, setUpdatedAt] = useState('');
+    const [description, setDescription] = useState('');
 
-	  const handleTitleChange = (e) => {
-		setTitle(e.target.value);
-	  };
-	
-	  const handleDescriptionChange = (e) => {
-		setDescription(e.target.value);
-	  };
+    const fetchData = useCallback(async (itemId) => {
+        if (itemId !== -1) {
+            try {
+                const url = `http://localhost:8080/item/${itemId}`;
+                const response = await axios.get(url);
+                const data = response.data;
+                setTitle(data.title);
+                setUpdatedAt(data.updatedAt);
+                setDescription(data.description);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+    }, []);
 
+    useEffect(() => {
+        fetchData(id);
+    }, [id, fetchData]);
+
+    const handleTitleChange = (e) => {
+        setTitle(e.target.value);
+    };
+
+    const handleDescriptionChange = (e) => {
+        setDescription(e.target.value);
+    };
+
+    const handleCreate = async () => {
+        try {
+            const url = `http://localhost:8080/create`;
+            const requestData = {
+                title: "",
+                description: ""
+            };
+            const response = await axios.post(url, requestData);
+            const createdItemId = response.data.id; 
+
+            fetchData(createdItemId);
+			onItemCreated(createdItemId);
+        } catch (error) {
+            console.error("Error creating item:", error);
+        }
+    };
 	return (
 		<div className="Preview bg-accent-700 flex flex-col flex-1 border-l border-black">
 			<div className="bg-accent-500 flex justify-between p-3 text-lg">
 				<div className="flex">
-					<div className="px-2 py-1 text-gray-400">
+					<div className="px-2 py-1 text-gray-400"
+					onClick={() => handleCreate()}>
 						<FiEdit />
 					</div>
 				</div>
